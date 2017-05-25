@@ -1,0 +1,19 @@
+{
+  "name": "dvbrouter",
+  "version": "1.0.0",
+  "description": "Proxy and manager of mumudvb instances",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Quetzacoalt91/dvbrouter.git"
+  },
+  "author": "Quetzacoalt91",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Quetzacoalt91/dvbrouter/issues"
+  },
+  "homepage": "https://github.com/Quetzacoalt91/dvbrouter#readme"
+}
