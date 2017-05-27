@@ -1,8 +1,11 @@
 import Hapi from 'hapi';
+import Request from 'request';
 
 import config from './config';
+import router from './router';
 
 const server = new Hapi.Server();
+router.init(config.mumudvb);
 
 server.connection(
     config.server,
@@ -13,6 +16,17 @@ server.route({
   path: '/',
   handler: (request, reply) => {
     reply('Hello, world!');
+  },
+});
+
+server.route({
+  method: 'GET',
+  path: '/stream',
+  handler: (request, reply) => {
+    const url = 'http://raspberrytv.local:4029/bysid/7168';
+    Request(url).on('response', function (response) {
+      reply(response);
+    });
   },
 });
 

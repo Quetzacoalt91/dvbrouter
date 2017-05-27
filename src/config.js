@@ -5,6 +5,11 @@ const config = {
     routes: { cors: true },
     labels: ['socket'],
   },
+  mumudvb: {
+    host: 'rapberrytv.local',
+    path: '/etc/mumudvb',
+    channels: 2,
+  },
 };
 
 export default config;
