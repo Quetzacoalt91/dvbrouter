@@ -2,9 +2,10 @@ import Hapi from 'hapi';
 import Request from 'request';
 
 import config from './config';
-import router from './router';
+import Router from './router';
 
 const server = new Hapi.Server();
+const router = new Router();
 router.init(config.mumudvb);
 
 server.connection(
