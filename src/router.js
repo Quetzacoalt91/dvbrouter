@@ -2,17 +2,18 @@ import fs from 'fs';
 import ini from 'ini';
 import Request from 'request';
 
-import Manager from './manager';
+import { initManager, linkCard, closeCard } from './manager';
 
 class router {
   config = {};
   servers = {};
-  manager = null;
+  clients = {};
 
   init(config) {
-    this.manager = new Manager(config);
+    initManager(config);
     this.config = config;
     const path = this.config.path;
+    const that = this;
 
     console.info('Initializing channel list from config files.');
 
@@ -23,45 +24,62 @@ class router {
         port: configContent.port_http,
         configFile,
       };
-      this.servers = Object.assign({}, this.servers, this.registerChannels(data));
+      that.clients[data.port] = [];
+      that.registerChannels(data);
     });
   }
 
   onConnect(request, callback) {
-    const associatedChannel = 0;
-    const err = null;
+    const id = parseInt(request.params.id, 10);
+    if (typeof this.servers[id] === 'undefined') {
+      return callback('Unregistered channel');
+    }
 
-    callback(err, { card: associatedChannel });
+    const associatedPort = this.servers[id].port;
+
+    this.clients[associatedPort].push(request);
+
+    linkCard(this.servers[id], (err, data) => {
+      if (err) {
+        return callback(err);
+      }
+      return callback(null, Object.assign({}, data, { channel: this.servers[id] }));
+    });
   }
 
   onDisconnect(request) {
-
+    clients.forEach(function(requests, port) {
+      requests.forEach(function(r, i) {
+        if (r === request) {
+          requests.splice(i, 1);
+          // If the client was the last one, close connection to DVB
+          if (requests.length === 0) {
+            closeCard({ port });
+          }
+        }
+      });
+    });
   }
 
   registerChannels(data) {
     const that = this;
-    const servers = {};
 
-    this.manager.linkCard(data, (err, data) => {
+    linkCard(data, (err, data) => {
 
       const channelUrl = `http://127.0.0.1:${data.port}/channels_list.json`;
       Request.get(channelUrl, function (err, res) {
         if (err) {
-          //that.manager.closeCard(data);
+          //closeCard(data);
           throw new Error(err);
         }
         const channels = JSON.parse(res.body);
         channels.forEach(function(channel) {
-          console.log(`Register ${channel.name} on port ${data.port}`);
-          servers[channel.service_id] = {
-            port: data.port,
-            name: channel.name,
-          };
+          console.log(`- Register ${channel.name} on port ${data.port}`);
+          that.servers[channel.service_id] = Object.assign(data, channel);
         });
-        that.manager.closeCard(data);
+        closeCard(data);
       });
     });
-    return servers;
   }
 }
 

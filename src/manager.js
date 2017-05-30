@@ -1,92 +1,93 @@
 import { spawnSync } from 'child_process';
 import ps from 'ps-node';
 
-class DvbManager {
-  allowedInstances = 0;
-  instances = [];
-  command = '/usr/bin/mumudvb';
+function manager() {
+}
+manager.allowedInstances = 0;
+manager.instances = [];
+manager.command = '/usr/bin/mumudvb';
 
-  constructor(config) {
-    this.allowedInstances = config.channels;
-    this.closeProcess();
+manager.findOpenSlot = () => {
+  for (let i = 0; i < manager.allowedInstances; i++) {
+    if (manager.isOpenSlot(i)) {
+      return i;
+    }
+  }
+  return false;
+}
+
+manager.isOpenSlot = (i) => {
+  return (manager.instances[i] === null
+    || typeof manager.instances[i] === 'undefined');
+}
+
+export function initManager(config) {
+  manager.allowedInstances = config.channels;
+}
+
+export function linkCard(data, callback) {
+  const that = manager;
+  // If already opened
+  manager.instances.forEach(function(instance, index) {
+    if (!that.isOpenSlot(index) && instance.port === data.port) {
+      return callback(null, instance);
+    }
+  });
+
+  const slot = manager.findOpenSlot();
+  // or if no slot available
+  if (slot === false) {
+    return callback('No more slots available!', null);
   }
 
-  linkCard(data, callback) {
-    const that = this;
-    // If already opened
-    this.instances.forEach(function(instance, index) {
-      if (!that.isOpenSlot(index) && instance.port === data.port) {
-        return callback(null, instance);
+  // reserve it!
+  manager.instances[slot] = { port: 0 };
+
+  // spawn new instance
+  const args = ['--card', slot, '-c', data.configFile];
+  const process = spawnSync(manager.command, args);
+  if (process.status) {
+    throw new Error(process.stderr);
+  }
+  const newInstance = {
+    args: args.join(' '),
+    port: data.port,
+    configFile: data.configFile,
+  };
+
+  manager.instances[slot] = newInstance;
+  setTimeout(function() { callback(null, newInstance); }, 5000);
+  return newInstance;
+}
+
+export function closeProcess(args) {
+  const query = { command: manager.command };
+  if (typeof args !== 'undefined') {
+    query.arguments = args;
+  }
+  ps.lookup(query, function(err, resultList) {
+    if (err) {
+      throw new Error(err);
+    }
+
+    resultList.forEach(function (process) {
+      if (process) {
+        ps.kill(process.pid, 'SIGTERM', function(){});
       }
     });
+  });
+}
 
-    // or if no slot available
-    if (this.instances.length >= this.allowedInstances) {
-      return callback('No more slots available!', null);
+export function closeCard(data) {
+  console.log('Request closing of port '+ data.port);
+  const len = manager.allowedInstances;
+  for (let i = 0; i < len; i++) {
+    // If used slop and related to the port to free
+    if (!manager.isOpenSlot(i) && manager.instances[i].port === data.port) {
+      closeProcess(manager.instances[i].configFile);
+      manager.instances[i] = null;
     }
-
-    // spawn new instance
-    const slot = this.findOpenSlot();
-    const args = ['--card', slot, '-c', data.configFile];
-    const process = spawnSync(this.command, args);
-    if (process.status) {
-      throw new Error(process.stderr);
-    }
-    const newInstance = {
-      command: this.command + ' ' + args.join(' '),
-      port: data.port,
-    };
-
-    this.instances[slot] = newInstance;
-    setTimeout(function() { callback(null, newInstance); }, 5000);
-    return newInstance;
-  }
-
-  closeCard(data) {
-    console.log('Request closing of port '+ data.port);
-    console.log(this.instances);
-    const len = this.allowedInstances;
-    for (let i = 0; i < len; i++) {
-      // If used slop and related to the port to free
-      if (!this.isOpenSlot(i) && this.instances[i].port === data.port) {
-        this.closeProcess(this.instances[i].command);
-        this.instances[i] = null;
-      }
-    }
-  }
-
-
-  findOpenSlot() {
-    for (let i = 0; i < this.allowedInstances; i++) {
-      if (this.isOpenSlot(i)) {
-        return i;
-      }
-    }
-    return false;
-  }
-
-  isOpenSlot(i) {
-    return (this.instances[i] === null
-      || typeof this.instances[i] === 'undefined');
-  }
-
-  closeProcess(args) {
-    console.log('Looking for command to close: '+ ((typeof args !== 'undefined') ? args : this.command));
-    ps.lookup({
-      command: (typeof args !== 'undefined') ? args : this.command,
-    }, function(err, resultList) {
-      if (err) {
-        throw new Error(err);
-      }
-
-      resultList.forEach(function (process) {
-        if (process) {
-          console.log('Send SIGTERM to '+ process.pid);
-          ps.kill(process.pid, 'SIGTERM', function(){});
-        }
-      });
-    });
   }
 }
 
-export default DvbManager;
+export default manager;
