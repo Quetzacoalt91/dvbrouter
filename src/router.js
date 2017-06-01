@@ -65,11 +65,14 @@ class router {
     const that = this;
 
     linkCard(data, (err, data) => {
+      if (err) {
+        throw new Error(err);
+      }
 
       const channelUrl = `http://127.0.0.1:${data.port}/channels_list.json`;
       Request.get(channelUrl, function (err, res) {
         if (err) {
-          //closeCard(data);
+          closeCard(data);
           throw new Error(err);
         }
         const channels = JSON.parse(res.body);

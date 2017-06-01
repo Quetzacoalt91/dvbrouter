@@ -36,13 +36,6 @@ server.route({
         reply(response, { title: data.channel.name });
       });
     });
-
-    request.on('error', () => {
-      router.onDisconnect(request);
-    });
-    request.on('close', () => {
-      router.onDisconnect(request);
-    });
   },
 });
 
