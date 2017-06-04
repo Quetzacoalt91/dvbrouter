@@ -53,7 +53,7 @@ export function linkCard(data, callback) {
   const process = spawn(manager.command, args);
   process.on('error', (err) => {
     console.error('Failed to start MumuDVB instance.');
-    return callback(err);
+    return callback('Failed to start MumuDVB instance.');
   });
   process.on('close', (code) => {
     manager.instances[slot] = null;
@@ -89,15 +89,20 @@ export function closeProcess() {
   });
 }
 
-export function closeCard(data) {
+export function closeCard(data, callback) {
   console.log('Request closing of port '+ data.port);
   const len = manager.allowedInstances;
   for (let i = 0; i < len; i++) {
     // If used slot and related to the port to free
     if (!manager.isOpenSlot(i) && manager.instances[i].port === data.port) {
-      manager.instances[i].process.kill();
+      if (manager.instances[i].process) {
+        manager.instances[i].process.kill();
+      }
       manager.instances[i] = null;
     }
+  }
+  if (callback) {
+    setTimeout(callback, 500);
   }
 }
 
