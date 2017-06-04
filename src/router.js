@@ -1,6 +1,7 @@
 import fs from 'fs';
 import ini from 'ini';
 import Request from 'request';
+import async from 'async';
 
 import { initManager, linkCard, closeCard } from './manager';
 
@@ -17,6 +18,10 @@ class router {
 
     console.info('Initializing channel list from config files.');
 
+    const q = async.queue(function(data, callback) {
+      that.registerChannels(data.data, callback);
+    }, config.channels);
+
     fs.readdirSync(path).forEach((file) => {
       const configFile = path + '/' + file;
       const configContent = ini.parse(fs.readFileSync(configFile, 'utf-8'));
@@ -25,7 +30,7 @@ class router {
         configFile,
       };
       that.clients[data.port] = [];
-      that.registerChannels(data);
+      q.push({ data });
     });
   }
 
@@ -64,26 +69,32 @@ class router {
     }, 10000);
   }
 
-  registerChannels(data) {
+  registerChannels(data, callback) {
     const that = this;
 
-    linkCard(data, (err, data) => {
+    async.retry({ times: 5, interval: 500 }, function(clbk) {
+      linkCard(data, clbk);
+    }, function(err, resp) {
       if (err) {
         throw new Error(err);
       }
 
-      const channelUrl = `http://127.0.0.1:${data.port}/channels_list.json`;
-      Request.get(channelUrl, function (err, res) {
-        if (err) {
-          closeCard(data);
-          throw new Error(err);
+      const channelUrl = `http://127.0.0.1:${resp.port}/channels_list.json`;
+      Request.get(channelUrl, function (err3, res) {
+        if (err3) {
+          if (callback) {
+            closeCard(resp, callback);
+          } else {
+            closeCard(resp);
+            throw new Error(err3);
+          }
         }
         const channels = JSON.parse(res.body);
         channels.forEach(function(channel) {
-          console.log(`- Register ${channel.name} on port ${data.port}`);
-          that.servers[channel.service_id] = Object.assign(data, channel);
+          console.log(`- Register ${channel.name} on port ${resp.port}`);
+          that.servers[channel.service_id] = Object.assign(resp, channel);
         });
-        closeCard(data);
+        closeCard(resp, callback);
       });
     });
   }
