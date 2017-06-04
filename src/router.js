@@ -69,6 +69,17 @@ class router {
     }, 10000);
   }
 
+  buildPlaylist(protocol, baseUrl) {
+    const channels = this.servers;
+    let content = '#EXTM3U\n';
+    Object.keys(channels).map(function(objectKey, index) {
+      var channel = channels[objectKey];
+      content += `#EXTINF:0,${channel.name}\n`;
+      content += `${protocol}://${baseUrl}/stream/${channel.service_id}\n`;
+    });
+    return content;
+  }
+
   registerChannels(data, callback) {
     const that = this;
 
@@ -91,8 +102,8 @@ class router {
         }
         const channels = JSON.parse(res.body);
         channels.forEach(function(channel) {
-          console.log(`- Register ${channel.name} on port ${resp.port}`);
-          that.servers[channel.service_id] = Object.assign(resp, channel);
+          console.log(`- Register ${channel.name} on port ${resp.port} (id ${channel.service_id})`);
+          that.servers[channel.service_id] = Object.assign({}, resp, channel);
         });
         closeCard(resp, callback);
       });

@@ -25,6 +25,16 @@ server.route({
 
 server.route({
   method: 'GET',
+  path: '/playlist',
+  handler: (request, reply) => {
+    reply(router.buildPlaylist(request.connection.info.protocol, request.info.host))
+      .header('Content-Type', 'audio/x-mpegurl')
+      .header("Content-Disposition", "attachment; filename=" + 'playlist.m3u');
+  },
+});
+
+server.route({
+  method: 'GET',
   path: '/stream/{id}',
   handler: (request, reply) => {
     router.onConnect(request, (err, data) => {
@@ -33,7 +43,7 @@ server.route({
       }
       const url = `http://127.0.0.1:${data.port}/bysid/${data.channel.service_id}`;
       Request(url).on('response', function (response) {
-        reply(response, { title: data.channel.name });
+        reply(response);
       });
     });
   },
