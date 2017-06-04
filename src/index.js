@@ -39,6 +39,12 @@ server.route({
   },
 });
 
+server.on('request-internal', (request, event, tags) => {
+  if (tags.aborted) {
+    router.onDisconnect(request);
+  }
+});
+
 server.start((err) => {
   if (err) {
     throw err;

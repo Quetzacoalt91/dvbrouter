@@ -45,9 +45,10 @@ export function linkCard(data, callback) {
   }
 
   // reserve it!
-  manager.instances[slot] = { port: 0 };
+  manager.instances[slot] = { port: data.port };
 
   // spawn new instance
+  console.info('Starting MumuDVB instance on slot #' + slot +' for port '+ data.port);
   const args = ['--card', slot, '-c', data.configFile, '-d'];
   const process = spawn(manager.command, args);
   process.on('error', (err) => {

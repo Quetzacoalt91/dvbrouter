@@ -7,7 +7,7 @@ import { initManager, linkCard, closeCard } from './manager';
 class router {
   config = {};
   servers = {};
-  clients = {};
+  clients = [];
 
   init(config) {
     initManager(config);
@@ -48,17 +48,20 @@ class router {
   }
 
   onDisconnect(request) {
-    clients.forEach(function(requests, port) {
-      requests.forEach(function(r, i) {
-        if (r === request) {
-          requests.splice(i, 1);
-          // If the client was the last one, close connection to DVB
-          if (requests.length === 0) {
-            closeCard({ port });
+    const that = this;
+    setTimeout(() => {
+      that.clients.forEach(function(requests, port) {
+        requests.forEach(function(r, i) {
+          if (r === request) {
+            requests.splice(i, 1);
+            // If the client was the last one, close connection to DVB
+            if (requests.length === 0) {
+              closeCard({ port });
+            }
           }
-        }
+        });
       });
-    });
+    }, 10000);
   }
 
   registerChannels(data) {
