@@ -51,6 +51,7 @@ export function linkCard(data, callback) {
   console.info('Starting MumuDVB instance on slot #' + slot +' for port '+ data.port);
   const args = ['--card', slot, '-c', data.configFile, '-d'];
   const process = spawn(manager.command, args);
+  process.ready = false;
   process.on('error', (err) => {
     console.error('Failed to start MumuDVB instance.');
     return callback('Failed to start MumuDVB instance.');
@@ -62,7 +63,10 @@ export function linkCard(data, callback) {
     }
   });
   process.stderr.on('data', (message) => {
-    if (message.indexOf('Autoconfiguration done') !== -1) {
+    if (!process.ready &&
+      (message.indexOf('Autoconfiguration done') !== -1 ||
+      message.indexOf('Channel accessible') !== -1)) {
+      process.ready = true;
       const newInstance = {
         process,
         port: parseInt(data.port, 10),
