@@ -52,7 +52,7 @@ server.route({
 });
 
 server.on('request-internal', (request, event, tags) => {
-  if (tags.aborted) {
+  if (tags.aborted || tags.closed) {
     router.onDisconnect(request);
   }
 });

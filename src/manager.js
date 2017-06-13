@@ -87,7 +87,7 @@ export function closeProcess() {
 
     resultList.forEach(function (process) {
       if (process) {
-        ps.kill(process.pid, 'SIGTERM', function(){});
+        ps.kill(process.pid, 'SIGKILL', function(){});
       }
     });
   });
