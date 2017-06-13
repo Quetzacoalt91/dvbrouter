@@ -1,3 +1,5 @@
+#!/usr/bin/env nodejs
+
 import Hapi from 'hapi';
 import Request from 'request';
 
