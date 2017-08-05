@@ -9,10 +9,12 @@ class router {
   config = {};
   servers = {};
   clients = [];
+  filters = [];
 
   init(config) {
     initManager(config);
     this.config = config;
+    this.filters = this.config.filters;
     const path = this.config.path;
     const that = this;
 
@@ -100,7 +102,19 @@ class router {
             throw new Error(err3);
           }
         }
-        const channels = JSON.parse(res.body);
+
+        // Get from JSON and filter unwanted channels
+        const length = that.filters.length;
+        const channels = JSON.parse(res.body).filter(function(channel) {
+          for(var i = 0; i < length; i++) {
+            if (channel.name.indexOf(that.filters[i]) !== -1) {
+              console.log(`- Filtered ${channel.name}`);
+              return false;
+            }
+          };
+          return true;
+        });
+
         channels.forEach(function(channel) {
           console.log(`- Register ${channel.name} on port ${resp.port} (id ${channel.service_id})`);
           that.servers[channel.service_id] = Object.assign({}, resp, channel);
