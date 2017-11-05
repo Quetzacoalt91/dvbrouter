@@ -3,7 +3,7 @@
 import Hapi from 'hapi';
 import Request from 'request';
 
-import config from './config';
+import config from '../config/config';
 import { closeProcess } from './manager';
 import Router from './router';
 
@@ -21,7 +21,7 @@ server.route({
   method: 'GET',
   path: '/',
   handler: (request, reply) => {
-    reply('Hello, world!');
+    reply('MumuDVB router is alive!');
   },
 });
 
