@@ -8,10 +8,16 @@ import { initManager, linkCard, closeCard } from './manager';
 class router {
   config = {};
   servers = {};
-  clients = [];
+  clients = {};
   filters = [];
 
-  init(config) {
+  /**
+   * Get all details from config file, then find all mumudvb instances
+   * available in given path before running them for channels list
+   * 
+   * @param {object} config from config file
+   */
+  init(config, callback) {
     initManager(config);
     this.config = config;
     this.filters = this.config.filters;
@@ -20,10 +26,18 @@ class router {
 
     console.info('Initializing channel list from config files.');
 
-    const q = async.queue(function(data, callback) {
+    /*
+    * Define a queue to avoid too channel registrations at the same time.
+    */
+    const queue = async.queue(function(data, callback) {
       that.registerChannels(data.data, callback);
     }, config.channels);
+    queue.drain = callback;
 
+    /*
+    * As soon as we read a config file for MumuDVB, we parse it for our router and
+    * we load the channels list from it.
+    */
     fs.readdirSync(path).forEach((file) => {
       const configFile = path + '/' + file;
       const configContent = ini.parse(fs.readFileSync(configFile, 'utf-8'));
@@ -32,10 +46,26 @@ class router {
         configFile,
       };
       that.clients[data.port] = [];
-      q.push({ data });
+      queue.push({ data });
     });
   }
 
+  /**
+   * Returns current status of router
+   */
+  getStatus() {
+    return {
+      config: this.config,
+      clients: this.clients,
+    };
+  }
+
+  /**
+   * On new request, create or reuse the related MumuDVB instance
+   * 
+   * @param {object} request from Hapi
+   * @param {function} callback 
+   */
   onConnect(request, callback) {
     const id = parseInt(request.params.id, 10);
     if (typeof this.servers[id] === 'undefined') {
@@ -54,15 +84,20 @@ class router {
     });
   }
 
+  /**
+   * When a user disconnects, close MumuDVB instance if not used anymore.
+   * 
+   * @param {object} request from Hapi
+   */
   onDisconnect(request) {
     const that = this;
     setTimeout(() => {
-      that.clients.forEach(function(requests, port) {
-        requests.forEach(function(r, i) {
+      Object.keys(that.clients).forEach(function(port) {
+        that.clients[port].forEach(function(r, i) {
           if (r === request) {
-            requests.splice(i, 1);
+            that.clients[port].splice(i, 1);
             // If the client was the last one, close connection to DVB
-            if (requests.length === 0) {
+            if (that.clients[port].length === 0) {
               closeCard({ port });
             }
           }
@@ -71,6 +106,12 @@ class router {
     }, 10000);
   }
 
+  /**
+   * Generate m3u file from channels list
+   * 
+   * @param {string} protocol 
+   * @param {string} baseUrl 
+   */
   buildPlaylist(protocol, baseUrl) {
     const channels = this.servers;
     let content = '#EXTM3U\n';
@@ -85,13 +126,14 @@ class router {
   registerChannels(data, callback) {
     const that = this;
 
-    async.retry({ times: 5, interval: 500 }, function(clbk) {
+    async.retry({ times: 10, interval: 1000 }, function(clbk) {
       linkCard(data, clbk);
     }, function(err, resp) {
       if (err) {
         throw new Error(err);
       }
 
+      // Harcoded 127.0.0.1 because we run the MumuDVB processes on the same machine
       const channelUrl = `http://127.0.0.1:${resp.port}/channels_list.json`;
       Request.get(channelUrl, function (err3, res) {
         if (err3) {
