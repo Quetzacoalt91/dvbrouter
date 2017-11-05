@@ -8,7 +8,7 @@ import { initManager, linkCard, closeCard } from './manager';
 class router {
   config = {};
   servers = {};
-  clients = [];
+  clients = {};
   filters = [];
 
   /**
@@ -17,7 +17,7 @@ class router {
    * 
    * @param {object} config from config file
    */
-  init(config) {
+  init(config, callback) {
     initManager(config);
     this.config = config;
     this.filters = this.config.filters;
@@ -32,6 +32,7 @@ class router {
     const queue = async.queue(function(data, callback) {
       that.registerChannels(data.data, callback);
     }, config.channels);
+    queue.drain = callback;
 
     /*
     * As soon as we read a config file for MumuDVB, we parse it for our router and
@@ -47,6 +48,16 @@ class router {
       that.clients[data.port] = [];
       queue.push({ data });
     });
+  }
+
+  /**
+   * Returns current status of router
+   */
+  getStatus() {
+    return {
+      config: this.config,
+      clients: this.clients,
+    };
   }
 
   /**
@@ -81,12 +92,12 @@ class router {
   onDisconnect(request) {
     const that = this;
     setTimeout(() => {
-      that.clients.forEach(function(requests, port) {
-        requests.forEach(function(r, i) {
+      Object.keys(that.clients).forEach(function(port) {
+        that.clients[port].forEach(function(r, i) {
           if (r === request) {
-            requests.splice(i, 1);
+            that.clients[port].splice(i, 1);
             // If the client was the last one, close connection to DVB
-            if (requests.length === 0) {
+            if (that.clients[port].length === 0) {
               closeCard({ port });
             }
           }
