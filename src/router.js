@@ -141,8 +141,8 @@ class router {
             closeCard(resp, callback);
           } else {
             closeCard(resp);
-            throw new Error(err3);
           }
+          throw new Error(err3);
         }
 
         // Get from JSON and filter unwanted channels
