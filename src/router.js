@@ -54,9 +54,16 @@ class router {
    * Returns current status of router
    */
   getStatus() {
+    const clients = Object.assign({}, this.clients);
+    Object.keys(clients).forEach(function(port) {
+      clients[port] = clients[port].map(function (client, port) {
+        return { headers: client.headers, info: client.info };
+      });
+    });
+
     return {
       config: this.config,
-      clients: this.clients,
+      clients: clients,
     };
   }
 
