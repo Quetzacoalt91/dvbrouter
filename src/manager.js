@@ -100,7 +100,7 @@ export function closeCard(data, callback) {
     // If used slot and related to the port to free
     if (!manager.isOpenSlot(i) && manager.instances[i].port === data.port) {
       if (manager.instances[i].process) {
-        manager.instances[i].process.kill('SIGINT');
+        manager.instances[i].process.kill();
       }
       manager.instances[i] = null;
     }

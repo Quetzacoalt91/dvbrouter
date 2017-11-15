@@ -54,9 +54,16 @@ class router {
    * Returns current status of router
    */
   getStatus() {
+    const clients = Object.assign({}, this.clients);
+    Object.keys(clients).forEach(function(port) {
+      clients[port] = clients[port].map(function (client, port) {
+        return { headers: client.headers, info: client.info };
+      });
+    });
+
     return {
       config: this.config,
-      clients: this.clients,
+      clients: clients,
     };
   }
 
@@ -141,8 +148,8 @@ class router {
             closeCard(resp, callback);
           } else {
             closeCard(resp);
-            throw new Error(err3);
           }
+          throw new Error(err3);
         }
 
         // Get from JSON and filter unwanted channels
