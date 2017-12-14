@@ -14,7 +14,7 @@ class router {
   /**
    * Get all details from config file, then find all mumudvb instances
    * available in given path before running them for channels list
-   * 
+   *
    * @param {object} config from config file
    */
   init(config, callback) {
@@ -64,14 +64,15 @@ class router {
     return {
       config: this.config,
       clients: clients,
+      channels: this.servers
     };
   }
 
   /**
    * On new request, create or reuse the related MumuDVB instance
-   * 
+   *
    * @param {object} request from Hapi
-   * @param {function} callback 
+   * @param {function} callback
    */
   onConnect(request, callback) {
     const id = parseInt(request.params.id, 10);
@@ -93,7 +94,7 @@ class router {
 
   /**
    * When a user disconnects, close MumuDVB instance if not used anymore.
-   * 
+   *
    * @param {object} request from Hapi
    */
   onDisconnect(request) {
@@ -105,7 +106,7 @@ class router {
             that.clients[port].splice(i, 1);
             // If the client was the last one, close connection to DVB
             if (that.clients[port].length === 0) {
-              closeCard({ port });
+              closeCard(port);
             }
           }
         });
@@ -115,9 +116,9 @@ class router {
 
   /**
    * Generate m3u file from channels list
-   * 
-   * @param {string} protocol 
-   * @param {string} baseUrl 
+   *
+   * @param {string} protocol
+   * @param {string} baseUrl
    */
   buildPlaylist(protocol, baseUrl) {
     const channels = this.servers;
@@ -145,9 +146,9 @@ class router {
       Request.get(channelUrl, function (err3, res) {
         if (err3) {
           if (callback) {
-            closeCard(resp, callback);
+            closeCard(resp.port, callback);
           } else {
-            closeCard(resp);
+            closeCard(resp.port);
           }
           throw new Error(err3);
         }
@@ -168,7 +169,7 @@ class router {
           console.log(`- Register ${channel.name} on port ${resp.port} (id ${channel.service_id})`);
           that.servers[channel.service_id] = Object.assign({}, resp, channel);
         });
-        closeCard(resp, callback);
+        closeCard(resp.port, callback);
       });
     });
   }

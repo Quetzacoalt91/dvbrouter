@@ -53,13 +53,14 @@ export function linkCard(data, callback) {
   const process = spawn(manager.command, args);
   process.ready = false;
   process.on('error', (err) => {
+    manager.instances[slot] = null;
     console.error('Failed to start MumuDVB instance.');
     return callback('Failed to start MumuDVB instance.');
   });
   process.on('close', (code) => {
     manager.instances[slot] = null;
     if (code !== 0) {
-      return callback(`mumudvb process exited with code ${code}`);
+      console.error(`mumudvb process exited with code ${code}`);
     }
   });
   process.stderr.on('data', (message) => {
@@ -74,7 +75,7 @@ export function linkCard(data, callback) {
       };
 
       manager.instances[slot] = newInstance;
-      callback(null, newInstance);
+      return callback(null, newInstance);
     }
   });
 }
@@ -93,14 +94,15 @@ export function closeProcess() {
   });
 }
 
-export function closeCard(data, callback) {
-  console.log('Request closing of port '+ data.port);
+export function closeCard(port, callback) {
+  port = parseInt(port, 10);
+  console.log('Request closing of port '+ port);
   const len = manager.allowedInstances;
   for (let i = 0; i < len; i++) {
     // If used slot and related to the port to free
-    if (!manager.isOpenSlot(i) && manager.instances[i].port === data.port) {
+    if (!manager.isOpenSlot(i) && manager.instances[i].port === port) {
       if (manager.instances[i].process) {
-        manager.instances[i].process.kill();
+        manager.instances[i].process.kill('SIGINT');
       }
       manager.instances[i] = null;
     }
