@@ -104,19 +104,17 @@ class router {
       linkCard(data, clbk);
     }, function(err, resp) {
       if (err) {
-        throw new Error(err);
+        return callback(err);
       }
 
       // Harcoded 127.0.0.1 because we run the MumuDVB processes on the same machine
       const channelUrl = `http://127.0.0.1:${resp.port}/channels_list.json`;
       Request.get(channelUrl, function (err3, res) {
         if (err3) {
+          closeCard(resp.port);
           if (callback) {
-            closeCard(resp.port, callback);
-          } else {
-            closeCard(resp.port);
+            return callback(err3);
           }
-          throw new Error(err3);
         }
 
         // Get from JSON and filter unwanted channels

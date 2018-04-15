@@ -4,7 +4,7 @@ import Hapi from 'hapi';
 import Request from 'request';
 
 import config from './config';
-import { closeProcess } from './manager';
+import { closeProcess, checkOpenedInstances } from './manager';
 import Router from './router';
 
 closeProcess();
@@ -65,6 +65,7 @@ const openConnections = () => {
       throw err;
     }
     console.info('DVB server running at:', server.info.uri);
+    setInterval(checkOpenedInstances, 5000);
   });
 
 };
