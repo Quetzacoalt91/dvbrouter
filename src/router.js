@@ -8,7 +8,6 @@ import { initManager, linkCard, closeCard } from './manager';
 class router {
   config = {};
   servers = {};
-  clients = {};
   filters = [];
 
   /**
@@ -45,7 +44,6 @@ class router {
         port: configContent.port_http,
         configFile,
       };
-      that.clients[data.port] = [];
       queue.push({ data });
     });
   }
@@ -54,16 +52,8 @@ class router {
    * Returns current status of router
    */
   getStatus() {
-    const clients = Object.assign({}, this.clients);
-    Object.keys(clients).forEach(function(port) {
-      clients[port] = clients[port].map(function (client, port) {
-        return { headers: client.headers, info: client.info };
-      });
-    });
-
     return {
       config: this.config,
-      clients: clients,
       channels: this.servers
     };
   }
@@ -82,36 +72,12 @@ class router {
 
     const associatedPort = this.servers[id].port;
 
-    this.clients[associatedPort].push(request);
-
     linkCard(this.servers[id], (err, data) => {
       if (err) {
         return callback(err);
       }
       return callback(null, Object.assign({}, data, { channel: this.servers[id] }));
     });
-  }
-
-  /**
-   * When a user disconnects, close MumuDVB instance if not used anymore.
-   *
-   * @param {object} request from Hapi
-   */
-  onDisconnect(request) {
-    const that = this;
-    setTimeout(() => {
-      Object.keys(that.clients).forEach(function(port) {
-        that.clients[port].forEach(function(r, i) {
-          if (r === request) {
-            that.clients[port].splice(i, 1);
-            // If the client was the last one, close connection to DVB
-            if (that.clients[port].length === 0) {
-              closeCard(port);
-            }
-          }
-        });
-      });
-    }, 10000);
   }
 
   /**

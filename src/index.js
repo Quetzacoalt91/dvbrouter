@@ -60,12 +60,6 @@ const openConnections = () => {
     },
   });
 
-  server.on('request-internal', (request, event, tags) => {
-    if (tags.aborted || tags.closed) {
-      router.onDisconnect(request);
-    }
-  });
-
   server.start((err) => {
     if (err) {
       throw err;
