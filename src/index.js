@@ -52,10 +52,8 @@ const openConnections = () => {
           console.error(err);
           return reply(err).code(500);
         }
-        const url = `http://127.0.0.1:${data.port}/bysid/${data.channel.service_id}`;
-        Request(url).on('response', function (response) {
-          reply(response);
-        });
+        const url = `${request.connection.info.protocol}://${request.info.hostname}:${data.port}/bysid/${data.channel.service_id}`;
+        return reply.redirect(url);
       });
     },
   });
