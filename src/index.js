@@ -4,7 +4,7 @@ import Hapi from 'hapi';
 import Request from 'request';
 
 import config from './config';
-import { closeProcess } from './manager';
+import { closeProcess, checkOpenedInstances } from './manager';
 import Router from './router';
 
 closeProcess();
@@ -60,17 +60,12 @@ const openConnections = () => {
     },
   });
 
-  server.on('request-internal', (request, event, tags) => {
-    if (tags.aborted || tags.closed) {
-      router.onDisconnect(request);
-    }
-  });
-
   server.start((err) => {
     if (err) {
       throw err;
     }
     console.info('DVB server running at:', server.info.uri);
+    setInterval(checkOpenedInstances, 5000);
   });
 
 };

@@ -1,5 +1,7 @@
 import { spawn } from 'child_process';
 import ps from 'ps-node';
+import Request from 'request';
+import http from 'http';
 
 function manager() {
 }
@@ -21,8 +23,56 @@ manager.isOpenSlot = (i) => {
     || typeof manager.instances[i] === 'undefined');
 }
 
+/**
+ * Get MumuDVB status and checks clients are still connected
+ */
+manager.closeIfNoClients = (port) => {
+  console.log('Checking clients of instance '+ port);
+  const options = {
+    host: '127.0.0.1',
+    port,
+    path: '/channels_list.json',
+  };
+
+  http.get(options, function(res) {
+    res.on('data', function(chunk) {
+      const channelsWithClients = JSON.parse(chunk).filter(function(channel) {
+        // We check the client at row 0, which always exist.
+        // If nobody is connected, its value is an empty object and thus must be filtered
+        return !(Object.keys(channel.clients[0]).length === 0
+          && channel.clients[0].constructor === Object);
+      });
+
+      // No client ? close
+      if (channelsWithClients.length === 0) {
+        closeCard(port);
+      }
+    });
+  }).on('error', function(e) {
+    if ('ECONNRESET' !== e.code) {
+      console.log('Error while checking status: ' + e.message);
+      return false;
+    }
+  }).end();
+}
+
 export function initManager(config) {
   manager.allowedInstances = config.channels;
+}
+
+/**
+ * For all opened instances, check there are still connected clients,
+ * close them is nobody use the service anymore
+ */
+export function checkOpenedInstances() {
+  const that = manager;
+  manager.instances.forEach(function(instance, index) {
+    // Check only fully started instance
+    if (!that.isOpenSlot(index)
+        && instance.process !== undefined) {
+      that.closeIfNoClients(instance.port);
+    }
+  });
 }
 
 export function linkCard(data, callback) {
@@ -59,8 +109,10 @@ export function linkCard(data, callback) {
   });
   process.on('close', (code) => {
     manager.instances[slot] = null;
-    if (code !== 0) {
-      console.error(`mumudvb process exited with code ${code}`);
+    if (code !== 0 && code !== null) {
+      const err = `mumudvb process exited with code ${code}`;
+      console.error(err);
+      return callback(err);
     }
   });
   process.stderr.on('data', (message) => {
@@ -102,7 +154,7 @@ export function closeCard(port, callback) {
     // If used slot and related to the port to free
     if (!manager.isOpenSlot(i) && manager.instances[i].port === port) {
       if (manager.instances[i].process) {
-        manager.instances[i].process.kill('SIGINT');
+        manager.instances[i].process.kill('SIGKILL');
       }
       manager.instances[i] = null;
     }
