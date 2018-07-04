@@ -7,7 +7,7 @@ const config = {
   },
   mumudvb: {
     host: 'rapberrytv.local',
-    path: '/etc/mumudvb',
+    path: '/home/thomas/mumudvb',
     channels: 2,
     filters: [
       'ADULT'
