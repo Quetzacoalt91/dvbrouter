@@ -36,12 +36,17 @@ manager.closeIfNoClients = (port) => {
 
   http.get(options, function(res) {
     res.on('data', function(chunk) {
-      const channelsWithClients = JSON.parse(chunk).filter(function(channel) {
-        // We check the client at row 0, which always exist.
-        // If nobody is connected, its value is an empty object and thus must be filtered
-        return !(Object.keys(channel.clients[0]).length === 0
-          && channel.clients[0].constructor === Object);
-      });
+      let channelsWithClients = [];
+      try {
+        channelsWithClients = JSON.parse(chunk).filter(function(channel) {
+          // We check the client at row 0, which always exist.
+          // If nobody is connected, its value is an empty object and thus must be filtered
+          return !(Object.keys(channel.clients[0]).length === 0
+            && channel.clients[0].constructor === Object);
+        });
+      } catch (e) {
+        console.log('Error while checking status: ' + e);
+      }
 
       // No client ? close
       if (channelsWithClients.length === 0) {

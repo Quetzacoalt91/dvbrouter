@@ -63,7 +63,7 @@ const openConnections = () => {
       throw err;
     }
     console.info('DVB server running at:', server.info.uri);
-    setInterval(checkOpenedInstances, 5000);
+    setInterval(checkOpenedInstances, 10000);
   });
 
 };
