@@ -1,14 +1,15 @@
 #!/usr/bin/env nodejs
 
 import Hapi from 'hapi';
-import Request from 'request';
 
 import config from './config';
 import { closeProcess, checkOpenedInstances } from './manager';
 import Router from './router';
+import Records from './records';
 
 closeProcess();
 const router = new Router();
+const records = new Records();
 
 const openConnections = () => {
   const server = new Hapi.Server();
@@ -58,14 +59,49 @@ const openConnections = () => {
     },
   });
 
+  /**
+   * Records
+   */
+  server.route({
+    method: 'GET',
+    path: '/records',
+    handler: (request, reply) => {
+      reply(records.list());
+    },
+  });
+  server.route({
+    method: 'POST',
+    path: '/records',
+    handler: (request, reply) => {
+      reply(records.add(request.payload));
+    },
+  });
+  server.route({
+    method: 'DELETE',
+    path: '/records/{id}',
+    handler: (request, reply) => {
+      reply(records.delete(request.params.id));
+    },
+  });
+  server.route({
+    method: 'GET',
+    path: '/records/check',
+    handler: (request, reply) => {
+      records.checkAndStart();
+      reply(records.list());
+    },
+  });
+
   server.start((err) => {
     if (err) {
       throw err;
     }
     console.info('DVB server running at:', server.info.uri);
+    records.setServerUrl(server.info.uri);
     setInterval(checkOpenedInstances, 10000);
   });
 
 };
 
 router.init(config.mumudvb, openConnections);
+records.init(config.storage, router);

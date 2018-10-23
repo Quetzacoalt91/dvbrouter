@@ -13,6 +13,9 @@ const config = {
       'ADULT'
     ],
   },
+  storage: {
+    destPath: '/mnt/Storage/records/',
+  }
 };
 
 export default config;
