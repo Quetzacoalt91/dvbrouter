@@ -88,7 +88,7 @@ const openConnections = () => {
     path: '/records/check',
     handler: (request, reply) => {
       records.checkAndStart();
-      reply(records.delete(request.params.id));
+      reply(records.list());
     },
   });
 
