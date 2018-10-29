@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { spawn } from 'child_process';
 
 /**
@@ -22,7 +23,8 @@ class Records {
 
   list() {
     return {
-      current: this.plannedRecords,
+      schedule: this.plannedRecords,
+      records: fs.readdirSync(this.destinationPath),
     };
   }
 
@@ -46,16 +48,12 @@ class Records {
     }
 
     this.plannedRecords.push(Object.assign({}, newData));
-    return {
-      current: this.plannedRecords,
-    };
+    return this.list();
   }
 
   delete(index) {
     this.plannedRecords.splice(index, 1);
-    return {
-      current: this.plannedRecords,
-    };
+    return this.list();
   }
 
   checkAndStart() {
