@@ -24,7 +24,12 @@ class Records {
   list() {
     return {
       schedule: this.plannedRecords,
-      records: fs.readdirSync(this.destinationPath),
+      records: fs.readdirSync(this.destinationPath).map(function(filename) {
+        return {
+          filename,
+          metadata: {},
+        }
+      }),
     };
   }
 
@@ -74,15 +79,18 @@ class Records {
         this.delete(index);
 
         // Start ffmpeg process for recording
-        const args = [];
+        const args = [
+          '-i', this.url + '/stream/' + record.channelId
+        ];
         // Create array with metadata params
         Object.keys(record.metadata).map(function(objectKey, index) {
           var value = record.metadata[objectKey];
-          args.concat(['-metadata', `${objectKey}="${value}"`]);
+          if (typeof value === 'string' || typeof value === 'number') {
+            args.push('-metadata', `${objectKey}="${value}"`);
+          }
         });
 
-        args.concat([
-          '-i', this.url + '/stream/' + record.channelId,
+        args.push(
           '-t', 60 * record.duration,
           '-map', '0:v:0', // Filter first video stream
           '-map', '0:a:0', // Filter first audio stream
@@ -90,7 +98,8 @@ class Records {
           '-c', 'copy', // Copy all
           '-scodec', 'dvdsub', // Trancode subtitle to dvd
           this.destinationPath+record.from+'.mp4',
-        ]);
+        );
+
         const subprocess = spawn('ffmpeg', args, {
           detached: true,
           stdio: 'ignore'
