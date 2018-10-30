@@ -37,7 +37,11 @@ class Records {
         };
     }
 
+    const metadata = data.metadata || {};
+    metadata.channel = data.channel; // Copy channel name in metadata
+
     const newData = Object.assign({}, data, {
+      metadata,
       channelId: this.findIdFromChannelName(data.channel)
     });
 
@@ -68,12 +72,30 @@ class Records {
           + ' minutes');
 
         this.delete(index);
+
         // Start ffmpeg process for recording
-        const args = [
+        const args = [];
+        // Create array with metadata params
+        Object.keys(record.metadata).map(function(objectKey, index) {
+          var value = record.metadata[objectKey];
+          args.concat(['-metadata', `${objectKey}="${value}"`]);
+        });
+
+        args.concat([
           '-i', this.url + '/stream/' + record.channelId,
           '-t', 60 * record.duration,
-          '-c', 'copy', this.destinationPath+record.from+'.mp4'];
-        spawn('ffmpeg', args);
+          '-map', '0:v:0', // Filter first video stream
+          '-map', '0:a:0', // Filter first audio stream
+          '-map', '0:s:0', // Filter first subtitle stream
+          '-c', 'copy', // Copy all
+          '-scodec', 'dvdsub', // Trancode subtitle to dvd
+          this.destinationPath+record.from+'.mp4',
+        ]);
+        const subprocess = spawn('ffmpeg', args, {
+          detached: true,
+          stdio: 'ignore'
+        });
+        subprocess.unref();
       }
     });
   }
