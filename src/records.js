@@ -86,7 +86,7 @@ class Records {
         Object.keys(record.metadata).map(function(objectKey, index) {
           var value = record.metadata[objectKey];
           if (typeof value === 'string' || typeof value === 'number') {
-            args.push('-metadata', `${objectKey}="${value}"`);
+            args.push('-metadata', `${objectKey}=${JSON.stringify(value)}`);
           }
         });
 
@@ -99,6 +99,8 @@ class Records {
           '-scodec', 'dvdsub', // Trancode subtitle to dvd
           this.destinationPath+record.from+'.mp4',
         );
+
+        console.log('FFmpeg args:', args);
 
         const subprocess = spawn('ffmpeg', args, {
           detached: true,
