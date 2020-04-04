@@ -2,6 +2,7 @@ import fs from 'fs';
 import ini from 'ini';
 import Request from 'request';
 import async from 'async';
+import { isAbsolute } from 'path';
 
 import { initManager, linkCard, closeCard } from './manager';
 
@@ -20,7 +21,7 @@ class router {
     initManager(config);
     this.config = config;
     this.filters = this.config.filters;
-    const path = this.config.path;
+    const path = isAbsolute(this.config.path) ? this.config.path : `${__dirname}/${this.config.path}`;
     const that = this;
 
     console.info('Initializing channel list from config files.');
