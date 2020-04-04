@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "server": {
+    "port": 3001,
+    "routes": { "cors": true },
+    "labels": ["socket"]
+  },
+  "mumudvb": {
+    "host": "rapberrytv.local",
+    "path": "../config/multiplexes/",
+    "channels": 2,
+    "filters": [
+      "ADULT"
+    ]
+  },
+  "storage": {
+    "destPath": "/mnt/Storage/records/"
+  }
+}
