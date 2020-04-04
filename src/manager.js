@@ -124,8 +124,10 @@ const methods = {
     });
     process.stderr.on('data', (message) => {
       if (!process.ready &&
-        (message.indexOf('Autoconfiguration done') !== -1 ||
-        message.indexOf('Channel accessible') !== -1)) {
+      /*(message.indexOf('Autoconfiguration done') !== -1 ||
+      message.indexOf('Channel accessible') !== -1)*/
+      // Waiting for channel numbers to be set
+      message.indexOf('We got the NIT, we update the channel names') !== -1) {
         process.ready = true;
         const newInstance = {
           process,

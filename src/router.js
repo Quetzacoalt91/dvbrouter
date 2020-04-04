@@ -86,13 +86,14 @@ const router = {
    * @param {string} baseUrl
    */
   buildPlaylist(protocol, baseUrl) {
-    const channels = this.servers;
     let content = '#EXTM3U\n';
-    Object.keys(channels).map(function(objectKey, index) {
-      var channel = channels[objectKey];
-      content += `#EXTINF:0,${channel.name}\n`;
-      content += `${protocol}://${baseUrl}/stream/${channel.service_id}\n`;
-    });
+    // Order by channel number, like on TV
+    Object.values(this.servers)
+      .sort((a, b) => (a.lcn > b.lcn) ? 1 : -1)
+      .forEach(function(channel) {
+        content += `#EXTINF:0,${channel.name}\n`;
+        content += `${protocol}://${baseUrl}/stream/${channel.service_id}\n`;
+      });
     return content;
   },
 
