@@ -4,12 +4,12 @@ import Request from 'request';
 import async from 'async';
 import { isAbsolute } from 'path';
 
-import { initManager, linkCard, closeCard } from './manager';
+import manager from './manager';
 
-class router {
-  config = {};
-  servers = {};
-  filters = [];
+const router = {
+  config: {},
+  servers: {},
+  filters: [],
 
   /**
    * Get all details from config file, then find all mumudvb instances
@@ -18,7 +18,7 @@ class router {
    * @param {object} config from config file
    */
   init(config, callback) {
-    initManager(config);
+    manager.initManager(config);
     this.config = config;
     this.filters = this.config.filters;
     const path = isAbsolute(this.config.path) ? this.config.path : `${__dirname}/${this.config.path}`;
@@ -47,7 +47,7 @@ class router {
       };
       queue.push({ data });
     });
-  }
+  },
 
   /**
    * Returns current status of router
@@ -57,7 +57,7 @@ class router {
       config: this.config,
       channels: this.servers
     };
-  }
+  },
 
   /**
    * On new request, create or reuse the related MumuDVB instance
@@ -73,13 +73,13 @@ class router {
 
     const associatedPort = this.servers[id].port;
 
-    linkCard(this.servers[id], (err, data) => {
+    manager.linkCard(this.servers[id], (err, data) => {
       if (err) {
         return callback(err);
       }
       return callback(null, Object.assign({}, data, { channel: this.servers[id] }));
     });
-  }
+  },
 
   /**
    * Generate m3u file from channels list
@@ -96,13 +96,13 @@ class router {
       content += `${protocol}://${baseUrl}/stream/${channel.service_id}\n`;
     });
     return content;
-  }
+  },
 
   registerChannels(data, callback) {
     const that = this;
 
     async.retry({ times: 10, interval: 1000 }, function(clbk) {
-      linkCard(data, clbk);
+      manager.linkCard(data, clbk);
     }, function(err, resp) {
       if (err) {
         return callback(err);
@@ -112,7 +112,7 @@ class router {
       const channelUrl = `http://127.0.0.1:${resp.port}/channels_list.json`;
       Request.get(channelUrl, function (err3, res) {
         if (err3) {
-          closeCard(resp.port);
+          manager.closeCard(resp.port);
           if (callback) {
             return callback(err3);
           }
@@ -134,10 +134,10 @@ class router {
           console.log(`- Register ${channel.name} on port ${resp.port} (id ${channel.service_id})`);
           that.servers[channel.service_id] = Object.assign({}, resp, channel);
         });
-        closeCard(resp.port, callback);
+        manager.closeCard(resp.port, callback);
       });
     });
-  }
+  },
 }
 
 export default router;

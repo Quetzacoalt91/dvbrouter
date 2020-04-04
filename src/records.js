@@ -6,32 +6,34 @@ import { spawn } from 'child_process';
  * * Get current project url
  * * match channel name with id
  */
-class Records {
-  plannedRecords = [];
-  destinationPath = null;
-  url = null;
-  router = null;
+const records = {
+  plannedRecords: [],
+  destinationPath: null,
+  url: null,
+  router: null,
+};
 
+export default {
   init(config, router) {
-    this.destinationPath = config.destPath;
-    this.router = router;
-  }
+    records.destinationPath = config.destPath;
+    records.router = router;
+  },
 
   setServerUrl(url) {
-    this.url = url;
-  }
+    records.url = url;
+  },
 
   list() {
     return {
-      schedule: this.plannedRecords,
-      records: fs.readdirSync(this.destinationPath).map(function(filename) {
+      schedule: records.plannedRecords,
+      records: fs.readdirSync(records.destinationPath).map(function(filename) {
         return {
           filename,
           metadata: {},
         }
       }),
     };
-  }
+  },
 
   add(data) {
     if (!data.channel
@@ -56,19 +58,19 @@ class Records {
       };
     }
 
-    this.plannedRecords.push(Object.assign({}, newData));
+    records.plannedRecords.push(Object.assign({}, newData));
     return this.list();
-  }
+  },
 
   delete(index) {
-    this.plannedRecords.splice(index, 1);
+    records.plannedRecords.splice(index, 1);
     return this.list();
-  }
+  },
 
   checkAndStart() {
     const now = (new Date()).getTime();
     console.log(`Checking schedule at ${now}...`);
-    this.plannedRecords.forEach((record, index) => {
+    records.plannedRecords.forEach((record, index) => {
       if (now >= record.from) {
         console.log('Starting record on '
           + record.channel
@@ -80,7 +82,7 @@ class Records {
 
         // Start ffmpeg process for recording
         const args = [
-          '-i', this.url + '/stream/' + record.channelId
+          '-i', records.url + '/stream/' + record.channelId
         ];
         // Create array with metadata params
         Object.keys(record.metadata).map(function(objectKey, index) {
@@ -97,7 +99,7 @@ class Records {
           '-map', '0:s:0', // Filter first subtitle stream
           '-c', 'copy', // Copy all
           '-scodec', 'dvdsub', // Trancode subtitle to dvd
-          this.destinationPath+record.from+'.mp4',
+          records.destinationPath+record.from+'.mp4',
         );
 
         console.log('FFmpeg args:', args);
@@ -109,7 +111,7 @@ class Records {
         subprocess.unref();
       }
     });
-  }
+  },
 
   /**
    * There is no corellation between Freeview and the channel list
@@ -117,7 +119,7 @@ class Records {
    * @param {string} name 
    */
   findIdFromChannelName(name) {
-    const channels = this.router.getStatus().channels;
+    const channels = records.router.getStatus().channels;
 
     // 1- Check strict equality
     for (let objectKey of Object.keys(channels)) {
@@ -135,6 +137,4 @@ class Records {
       }
     };
   }
-}
-
-export default Records;
+};

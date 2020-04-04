@@ -1,3 +1,5 @@
+import records from '../records';
+
 export default [
     /**
      * Records

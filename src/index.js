@@ -3,15 +3,13 @@
 import Hapi from 'hapi';
 
 import config from '../config/app.json';
-import { closeProcess, checkOpenedInstances } from './manager';
-import Router from './router';
-import Records from './records';
+import manager from './manager';
+import router from './router';
+import records from './records';
 import streamRoutes from './api/stream-routes';
 import recordsRoutes from './api/records-routes';
 
-closeProcess();
-const router = new Router();
-const records = new Records();
+manager.closeProcess();
 
 /**
  * Callback method starting the API after
@@ -33,7 +31,7 @@ const openConnections = () => {
     }
     console.info('DVB server running at:', server.info.uri);
     records.setServerUrl(server.info.uri);
-    setInterval(checkOpenedInstances, 10000);
+    setInterval(manager.checkOpenedInstances, 10000);
   });
 
 };
