@@ -8,7 +8,7 @@ import manager from './manager';
 
 const router = {
   config: {},
-  servers: {},
+  channels: {},
   filters: [],
 
   /**
@@ -55,7 +55,7 @@ const router = {
   getStatus() {
     return {
       config: this.config,
-      channels: this.servers
+      channels: this.channels
     };
   },
 
@@ -67,15 +67,15 @@ const router = {
    */
   onConnect(request, callback) {
     const id = parseInt(request.params.id, 10);
-    if (typeof this.servers[id] === 'undefined') {
+    if (typeof this.channels[id] === 'undefined') {
       return callback('Unregistered channel');
     }
 
-    manager.linkCard(this.servers[id], (err, data) => {
+    manager.linkCard(this.channels[id], (err, data) => {
       if (err) {
         return callback(err);
       }
-      return callback(null, Object.assign({}, data, { channel: this.servers[id] }));
+      return callback(null, Object.assign({}, data, { channel: this.channels[id] }));
     });
   },
 
@@ -88,7 +88,7 @@ const router = {
   buildPlaylist(protocol, baseUrl) {
     let content = '#EXTM3U\n';
     // Order by channel number, like on TV
-    Object.values(this.servers)
+    Object.values(this.channels)
       .sort((a, b) => (a.lcn > b.lcn) ? 1 : -1)
       .forEach(function(channel) {
         content += `#EXTINF:0,${channel.name}\n`;
@@ -131,7 +131,7 @@ const router = {
 
         channels.forEach(function(channel) {
           console.log(`- Register ${channel.name} on port ${resp.port} (id ${channel.service_id})`);
-          that.servers[channel.service_id] = Object.assign({}, resp, channel);
+          that.channels[channel.service_id] = Object.assign({}, resp, channel);
         });
         manager.closeCard(resp.port, callback);
       });
