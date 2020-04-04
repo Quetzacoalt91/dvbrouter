@@ -55,6 +55,7 @@ const manager = {
     }).on('error', function(e) {
       if ('ECONNRESET' !== e.code) {
         console.log('Error while checking status: ' + e.message);
+        methods.closeCard(port);
         return false;
       }
     }).end();
@@ -108,13 +109,16 @@ const methods = {
     const args = ['--card', slot, '-c', data.configFile, '-d'];
     const process = spawn(manager.command, args);
     process.ready = false;
+    process.isUp = true;
     process.on('error', (err) => {
       manager.instances[slot] = null;
+      process.isUp = false;
       console.error('Failed to start MumuDVB instance.');
       return callback('Failed to start MumuDVB instance.');
     });
     process.on('close', (code) => {
       manager.instances[slot] = null;
+      process.isUp = false;
       if (code !== 0 && code !== null) {
         const err = `mumudvb process exited with code ${code}`;
         console.error(err);
@@ -123,8 +127,10 @@ const methods = {
     });
     process.stderr.on('data', (message) => {
       if (!process.ready &&
-        (message.indexOf('Autoconfiguration done') !== -1 ||
-        message.indexOf('Channel accessible') !== -1)) {
+      /*(message.indexOf('Autoconfiguration done') !== -1 ||
+      message.indexOf('Channel accessible') !== -1)*/
+      // Waiting for channel numbers to be set
+      message.indexOf('We got the NIT, we update the channel names') !== -1) {
         process.ready = true;
         const newInstance = {
           process,
@@ -133,9 +139,21 @@ const methods = {
         };
 
         manager.instances[slot] = newInstance;
+        process.isUp = false;
         return callback(null, newInstance);
       }
     });
+    // After a few seconds, stop the process if Mumudvb has not totally started.
+    // This issue occurs for instance when the antenna has some issues.
+    setTimeout(() => {
+      if (process.isUp === true) {
+        manager.instances[slot] = null;
+        process.kill('SIGKILL');
+        const err = 'Acknowledgment message never received. Aborting.';
+        console.error(err);
+        return callback(err);
+      }
+    }, 30000);
   },
 
   closeProcess: () => {
