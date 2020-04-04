@@ -71,8 +71,6 @@ const router = {
       return callback('Unregistered channel');
     }
 
-    const associatedPort = this.servers[id].port;
-
     manager.linkCard(this.servers[id], (err, data) => {
       if (err) {
         return callback(err);

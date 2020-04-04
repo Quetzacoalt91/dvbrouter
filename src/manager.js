@@ -55,6 +55,7 @@ const manager = {
     }).on('error', function(e) {
       if ('ECONNRESET' !== e.code) {
         console.log('Error while checking status: ' + e.message);
+        methods.closeCard(port);
         return false;
       }
     }).end();
