@@ -7,6 +7,7 @@ const manager = {
   allowedInstances: 0,
   instances: [],
   command: '/usr/bin/mumudvb',
+  quickStart: false,
 
   findOpenSlot: () => {
     for (let i = 0; i < manager.allowedInstances; i++) {
@@ -60,6 +61,19 @@ const manager = {
       }
     }).end();
   },
+
+  messageSaysMumudvbIsReady: (message) => {
+    if (manager.quickStart && (
+      message.indexOf('Looking through all channels') !== -1 ||
+      message.indexOf('Autoconfiguration done') !== -1 ||
+      message.indexOf('Channel accessible') !== -1)
+    ) {
+      return true;
+    }
+
+    // If we wait for the complete startup, channel numbers must be set
+    return message.indexOf('We got the NIT, we update the channel names') !== -1;
+  },
 };
 
 const methods = {
@@ -80,6 +94,16 @@ const methods = {
         that.closeIfNoClients(instance.port);
       }
     });
+  },
+
+  /**
+   * When the channels list is built here, we don't need to wait
+   * for the complete start of MumuDvb anymore. We can consider Mumudvb
+   * ready as soon as its channels are detected.
+   * @param {boolean} quickStart 
+   */
+  setQuickStartOfMumudvbInstances(quickStart) {
+    manager.quickStart = quickStart;
   },
 
   linkCard: (data, callback) => {
@@ -126,11 +150,10 @@ const methods = {
       }
     });
     process.stderr.on('data', (message) => {
-      if (!process.ready &&
-      /*(message.indexOf('Autoconfiguration done') !== -1 ||
-      message.indexOf('Channel accessible') !== -1)*/
-      // Waiting for channel numbers to be set
-      message.indexOf('We got the NIT, we update the channel names') !== -1) {
+      if (process.ready) {
+        return;
+      }
+      if (manager.messageSaysMumudvbIsReady(message)) {
         process.ready = true;
         const newInstance = {
           process,
