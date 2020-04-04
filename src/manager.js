@@ -109,13 +109,16 @@ const methods = {
     const args = ['--card', slot, '-c', data.configFile, '-d'];
     const process = spawn(manager.command, args);
     process.ready = false;
+    process.isUp = true;
     process.on('error', (err) => {
       manager.instances[slot] = null;
+      process.isUp = false;
       console.error('Failed to start MumuDVB instance.');
       return callback('Failed to start MumuDVB instance.');
     });
     process.on('close', (code) => {
       manager.instances[slot] = null;
+      process.isUp = false;
       if (code !== 0 && code !== null) {
         const err = `mumudvb process exited with code ${code}`;
         console.error(err);
@@ -136,9 +139,21 @@ const methods = {
         };
 
         manager.instances[slot] = newInstance;
+        process.isUp = false;
         return callback(null, newInstance);
       }
     });
+    // After a few seconds, stop the process if Mumudvb has not totally started.
+    // This issue occurs for instance when the antenna has some issues.
+    setTimeout(() => {
+      if (process.isUp === true) {
+        manager.instances[slot] = null;
+        process.kill('SIGKILL');
+        const err = 'Acknowledgment message never received. Aborting.';
+        console.error(err);
+        return callback(err);
+      }
+    }, 30000);
   },
 
   closeProcess: () => {
