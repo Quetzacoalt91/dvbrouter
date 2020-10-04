@@ -69,7 +69,7 @@ export default {
 
   checkAndStart() {
     const now = (new Date()).getTime();
-    console.log(`Checking schedule at ${now}...`);
+    //console.log(`Checking schedule at ${now}...`);
     records.plannedRecords.forEach((record, index) => {
       if (now >= record.from) {
         console.log('Starting record on '
