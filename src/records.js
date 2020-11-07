@@ -24,15 +24,22 @@ export default {
   },
 
   list() {
-    return {
-      schedule: records.plannedRecords,
-      records: fs.readdirSync(records.destinationPath).map(function(filename) {
+    fs.access(records.destinationPath, fs.constants.R_OK, (err) => {
+      if (err) {
         return {
-          filename,
-          metadata: {},
-        }
-      }),
-    };
+          error: "Directory does not exist or can't be read.",
+        };
+      }
+      return {
+        schedule: records.plannedRecords,
+        records: fs.readdirSync(records.destinationPath).map(function(filename) {
+          return {
+            filename,
+            metadata: {},
+          }
+        }),
+      };
+    });
   },
 
   add(data) {
