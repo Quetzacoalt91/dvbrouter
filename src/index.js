@@ -1,6 +1,6 @@
 #!/usr/bin/env nodejs
 
-import Hapi from 'hapi';
+import Hapi from '@hapi/hapi';
 
 import config from '../config/app.json';
 import manager from './manager';
@@ -16,25 +16,21 @@ manager.closeProcess();
  * initialization of the core.
  */
 const openConnections = () => {
-  const server = new Hapi.Server();
-
-  server.connection(
-      config.server,
-  );
+  const server = Hapi.Server(config.server);
 
   server.route(streamRoutes);
   server.route(recordsRoutes);
 
-  server.start((err) => {
-    if (err) {
-      throw err;
-    }
-    console.info('DVB server running at:', server.info.uri);
-    records.setServerUrl(server.info.uri);
-    setInterval(manager.checkOpenedInstances, 10000);
-  });
-
+  server.start();
+  console.log('DVB server running at:', server.info.uri);
+  records.setServerUrl(server.info.uri);
+  setInterval(manager.checkOpenedInstances, 10000);
 };
+
+process.on('unhandledRejection', (err) => {
+  console.log(err);
+  process.exit(1);
+});
 
 router.init(config.mumudvb, openConnections);
 records.init(config.storage, router);

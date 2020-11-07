@@ -2,8 +2,7 @@
   "version": 1,
   "server": {
     "port": 3001,
-    "routes": { "cors": true },
-    "labels": ["socket"]
+    "routes": { "cors": true }
   },
   "mumudvb": {
     "host": "rapberrytv.local",
