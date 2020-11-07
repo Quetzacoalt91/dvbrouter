@@ -13,6 +13,32 @@ To avoid having to choose between multiplexes, this project has been created: - 
 - It forwards the client to the stream once ready,
 - It closes the process when no more clients watch an existing multiplex.
 
+## Configuration
+
+The configuration file can be found in `config/app.json`.
+
+```js
+{
+  "version": 1,
+  "server": {
+    "port": 3001, // Port to listen to
+    "routes": { "cors": true },
+    "labels": ["socket"]
+  },
+  "mumudvb": {
+    "host": "rapberrytv.local",
+    "path": "../config/multiplexes/", // Folder where configuration files are stored
+    "channels": 2, // Number of tuners available on the system
+    "filters": [
+      "ADULT"
+    ]
+  },
+  "storage": {
+    "destPath": "/mnt/Storage/records/"
+  }
+}
+```
+
 ## Installation for production
 
 ```
@@ -21,6 +47,32 @@ npm run serve
 ```
 
 The user running this project will be the owner of the mumudvb processes. It must run with a user that belongs to the `video` group or `root`.
+
+## Routes
+
+```
+GET: /
+```
+
+When the project is ready to receive requests, the root page will great you with a successful message.
+
+```
+GET: /status
+```
+
+This endpoints provides some details about the channels that have ben scanned.
+
+```
+GET: /playlist
+```
+
+Download the playlist in M3U format
+
+```
+GET: /stream/<ID>
+```
+
+Start the streaming of a given channel (ID to be found in the playlist).
 
 ## Development
 
