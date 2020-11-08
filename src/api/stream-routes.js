@@ -4,37 +4,40 @@ export default [
     {
         method: 'GET',
         path: '/',
-        handler: (request, reply) => {
-            reply('MumuDVB router is alive!');
+        handler: (request, h) => {
+            return 'MumuDVB router is alive!';
         },
     },
     {
         method: 'GET',
         path: '/status',
-        handler: (request, reply) => {
-            reply(router.getStatus());
+        handler: (request, h) => {
+            return router.getStatus();
         },
     },
     {
         method: 'GET',
         path: '/playlist',
-        handler: (request, reply) => {
-            reply(router.buildPlaylist(request.connection.info.protocol, request.info.host))
-            .header('Content-Type', 'audio/x-mpegurl')
-            .header("Content-Disposition", 'attachment; filename=playlist.m3u');
+        handler: (request, h) => {
+            return h.response(router.buildPlaylist(request.server.info.protocol, request.info.host))
+                .type('audio/x-mpegurl')
+                .header("Content-Disposition", 'attachment; filename=playlist.m3u');
         },
     },
     {
         method: 'GET',
         path: '/stream/{id}',
-        handler: (request, reply) => {
-            router.onConnect(request, (err, data) => {
-            if (err) {
-                console.error(err);
-                return reply(err).code(500);
-            }
-            const url = `${request.connection.info.protocol}://${request.info.hostname}:${data.port}/bysid/${data.channel.service_id}`;
-            return reply.redirect(url);
+        handler: (request, h) => {
+            // Asynchronous response
+            return new Promise(resolve => {
+                router.onConnect(request, (err, data) => {
+                    if (err) {
+                        console.error(err);
+                        return resolve(h.response(err).code(500));
+                    }
+                    const url = `${request.server.info.protocol}://${request.info.hostname}:${data.port}/bysid/${data.channel.service_id}`;
+                    resolve(h.redirect(url));
+                });
             });
         },
     },

@@ -24,12 +24,8 @@ export default {
   },
 
   list() {
-    fs.access(records.destinationPath, fs.constants.R_OK, (err) => {
-      if (err) {
-        return {
-          error: "Directory does not exist or can't be read.",
-        };
-      }
+    try {
+      fs.accessSync(records.destinationPath, fs.constants.R_OK);
       return {
         schedule: records.plannedRecords,
         records: fs.readdirSync(records.destinationPath).map(function(filename) {
@@ -39,7 +35,11 @@ export default {
           }
         }),
       };
-    });
+    } catch (err) {
+      return {
+        error: "Directory does not exist or can't be read.",
+      };
+    }
   },
 
   add(data) {

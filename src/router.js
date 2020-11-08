@@ -1,7 +1,8 @@
 import fs from 'fs';
 import ini from 'ini';
 import Request from 'request';
-import async from 'async';
+import asyncQueue from 'async/queue';
+import asyncRetry from 'async/retry';
 import { isAbsolute } from 'path';
 
 import manager from './manager';
@@ -29,13 +30,13 @@ const router = {
     /*
     * Define a queue to avoid too channel registrations at the same time.
     */
-    const queue = async.queue(function(data, callback) {
+    const queue = asyncQueue(function(data, callback) {
       that.registerChannels(data.data, callback);
     }, config.channels);
-    queue.drain = () => {
+    queue.drain(() => {
       manager.setQuickStartOfMumudvbInstances(true);
       callback();
-    };
+    });
 
     /*
     * As soon as we read a config file for MumuDVB, we parse it for our router and
@@ -103,7 +104,7 @@ const router = {
   registerChannels(data, callback) {
     const that = this;
 
-    async.retry({ times: 5, interval: 1000 }, function(clbk) {
+    asyncRetry({ times: 5, interval: 1000 }, function(clbk) {
       manager.linkCard(data, clbk);
     }, function(err, resp) {
       if (err) {
