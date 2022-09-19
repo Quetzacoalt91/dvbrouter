@@ -2,8 +2,7 @@ import { spawn } from 'child_process';
 import * as child from 'child_process';
 import ps from 'ps-node';
 import { InitData } from './types/router';
-import { ChannelsList } from './types/mumudvb';
-import { getChannelsList } from './mumudvb';
+import { filterChannelsWithClients, getChannelsList } from './mumudvb';
 
 export type Instance = {
   port: number,
@@ -167,15 +166,9 @@ class ProcessManager {
    */
   private async closeIfNoClients(port: number) {
     console.log(`Checking clients of instance ${port}`);
-    const data: ChannelsList = await getChannelsList(port);
 
     try {
-      const channelsWithClients = data.filter(function(channel) {
-        // We check the client at row 0, which always exist.
-        // If nobody is connected, its value is an empty object and thus must be filtered
-        return !(Object.keys(channel.clients[0]).length === 0
-          && channel.clients[0].constructor === Object);
-      });
+      const channelsWithClients = filterChannelsWithClients(await getChannelsList(port));
       // No client ? close
       if (channelsWithClients.length === 0) {
         this.closeInstance(port);

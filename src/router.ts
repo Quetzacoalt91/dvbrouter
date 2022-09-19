@@ -5,12 +5,12 @@ import { isAbsolute } from 'path';
 import ProcessManager, { Instance } from './process-manager';
 import { queue, retry } from 'async';
 import { DvbConfig } from './types/config';
-import { InitData } from './types/router';
+import { Channel, InitData } from './types/router';
 
-import { Channel as MumuDVBChannel, ChannelsList } from './types/mumudvb';
+import { ChannelsList } from './types/mumudvb';
 import { getChannelsList } from './mumudvb';
 
-export type Channel = MumuDVBChannel&Instance;
+
 class Router {
   private config: DvbConfig;
   private channels: Map<number, Channel>;
