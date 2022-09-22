@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import * as child from 'child_process';
-import ps from 'ps-node';
+import {kill, lookup} from 'ps-node';
 import { InitData } from './types/router';
 import { filterChannelsWithClients, getChannelsList } from './mumudvb';
 
@@ -16,11 +16,15 @@ export type Instance = {
 class ProcessManager {
   private instances: (Instance|null)[] = [];
   private quickStart: boolean = false;
-  private static readonly command = '/usr/bin/mumudvb';
+  private static readonly command = '/usr/local/bin/mumudvb';
 
   public constructor(
-    private allowedInstances = 0,
-  ) {}
+    private allowedInstances: number,
+  ) {
+    for (let i = 0; i < this.allowedInstances; i++) {
+      this.instances[i] = null;
+    }
+  }
 
   /**
    * For all opened instances, check there are still connected clients,
@@ -48,7 +52,7 @@ class ProcessManager {
   public async startInstance(data: InitData): Promise<Instance> {
     // If already opened
     const existingInstance = this.instances.find((instance, index) => {
-      return (this.isOpenSlot(index) && instance?.port === data.port);
+      return (!this.isOpenSlot(index) && instance?.port === data.port);
     });
 
     if (existingInstance) {
@@ -66,6 +70,8 @@ class ProcessManager {
       port: data.port,
       configFile: data.configFile,
     };
+
+    console.debug(`Instance #${slot} is now reserved for port ${data.port}`);
 
     try {
       const runningInstance: Instance = await new Promise((resolve, reject) => {
@@ -121,14 +127,14 @@ class ProcessManager {
   }
 
   public static closeRunningProcesses() {
-    ps.lookup({ command: this.command }, function(err, resultList) {
+    lookup({ command: this.command }, function(err, resultList) {
       if (err) {
         throw err;
       }
 
-      resultList.forEach(function (process) {
+      resultList.forEach((process) => {
         if (process) {
-          ps.kill(process.pid, 'SIGKILL', function(){});
+          kill(process.pid, 'SIGKILL', function(){});
         }
       });
     });
@@ -158,7 +164,7 @@ class ProcessManager {
   }
 
   private isOpenSlot(i: number): boolean {
-    return !!this.instances[i];
+    return this.instances[i] === null;
   }
 
   /**

@@ -1,11 +1,11 @@
 #!/usr/bin/env nodejs
 
-import Hapi from '@hapi/hapi';
+import {Server} from '@hapi/hapi';
 
-import config from '../config/app.json';
 import ProcessManager from './process-manager';
 import streamRoutes from './api/stream-routes';
 import Router from './router';
+const config = require('../config/app.json');
 
 ProcessManager.closeRunningProcesses();
 
@@ -13,11 +13,17 @@ ProcessManager.closeRunningProcesses();
  * Callback method starting the API after
  * initialization of the core.
  */
-const openConnections = () => {
-  const server = new Hapi.Server(config.server);
+const openConnections = async () => {
+  const server = new Server(config.server);
+  const manager = new ProcessManager(config.mumudvb.channels);
+  const router = new Router(config.mumudvb, manager);
 
-  server.route(streamRoutes(new Router(config.mumudvb)));
+  await router.init();
 
+  //setInterval(() => manager.findAndCloseUnusedInstances(), 10000);
+  console.log('Check of unused instances initialized');
+
+  server.route(streamRoutes(router));
   server.start();
   console.log('DVB server running at:', server.info.uri);
 };

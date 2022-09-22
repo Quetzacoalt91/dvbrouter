@@ -1,5 +1,5 @@
-import fs from 'fs';
-import ini from 'ini';
+import { readdirSync, readFileSync } from 'fs';
+import { parse } from 'ini';
 import { isAbsolute } from 'path';
 
 import ProcessManager, { Instance } from './process-manager';
@@ -12,22 +12,19 @@ import { getChannelsList } from './mumudvb';
 
 
 class Router {
-  private config: DvbConfig;
   private channels: Map<number, Channel>;
   private filters: string[] = [];
-  private manager: ProcessManager;
 
   /**
    * Get all details from config file, then find all mumudvb instances
    * available in given path before running them for channels list
    */
-  public constructor(config: DvbConfig) {
-    this.manager = new ProcessManager(config.channels);
-    this.config = config;
+  public constructor(
+    private config: DvbConfig,
+    private manager: ProcessManager,
+  ) {
     this.filters = this.config.filters;
     this.channels = new Map<number, Channel&Instance>
-
-    this.init();
   }
     
   public async init() {
@@ -36,8 +33,13 @@ class Router {
     /*
      * Define a queue to avoid too channel registrations at the same time.
      */
-    const muxQueue = queue((data: InitData) => {
-      this.registerChannels(data);
+    const muxQueue = queue(async (data: InitData, done) => {
+      try {
+        await this.registerChannels(data);
+        done();
+      } catch (err:any) {
+        done(err);
+      }
     }, this.config.channels);
 
     /*
@@ -46,20 +48,21 @@ class Router {
     */
     const path = isAbsolute(this.config.path) ? this.config.path : `${__dirname}/${this.config.path}`;
 
-    fs.readdirSync(path).forEach((file) => {
+    console.debug(`Reading files in ${path}`);
+    readdirSync(path).forEach(async (file: string) => {
       const configFile = path + '/' + file;
-      const configContent = ini.parse(fs.readFileSync(configFile, 'utf-8'));
+      const configContent = parse(readFileSync(configFile, 'utf-8'));
       const data = {
         port: configContent.port_http,
         configFile,
       };
-      muxQueue.push(data);
+      console.debug(`Will init port ${data.port} with config file ${data.configFile}`);
+      await muxQueue.push(data);
     });
 
     await muxQueue.drain();
 
     this.manager.setQuickStartOfMumudvbInstances(true);
-    setInterval(this.manager.findAndCloseUnusedInstances, 10000);
   }
 
   /**
@@ -68,7 +71,7 @@ class Router {
   getStatus() {
     return {
       config: this.config,
-      channels: Array.from(this.channels.entries())
+      channels: Array.from(this.channels.values())
     };
   }
 
@@ -104,8 +107,8 @@ class Router {
   }
 
   async registerChannels(initData: InitData) {
-    const resp: Instance = await retry({ times: 5, interval: 1000 }, () => {
-      return this.manager.startInstance(initData);
+    const resp: Instance = await retry({ times: 5, interval: 1000 }, async () => {
+      return await this.manager.startInstance(initData);
     })
 
     const data: ChannelsList = await getChannelsList(resp.port);
@@ -114,7 +117,7 @@ class Router {
 
     // Get from JSON and filter unwanted channels
     const length = this.filters.length;
-    const channels = data.filter(function(channel) {
+    const channels = data.filter((channel) => {
       for(var i = 0; i < length; i++) {
         if (channel.name.indexOf(this.filters[i]) !== -1) {
           console.log(`- Filtered ${channel.name}`);
@@ -124,7 +127,7 @@ class Router {
       return true;
     });
 
-    channels.forEach(function(channel) {
+    channels.forEach((channel) => {
       console.log(`- Register ${channel.name} on port ${resp.port} (id ${channel.service_id})`);
       this.channels.set(channel.service_id, {...resp, ...channel});
     });
