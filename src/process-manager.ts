@@ -16,7 +16,7 @@ export type Instance = {
 class ProcessManager {
   private instances: (Instance|null)[] = [];
   private quickStart: boolean = false;
-  private static readonly command = '/usr/local/bin/mumudvb';
+  private static readonly command = '/usr/bin/mumudvb';
 
   public constructor(
     private allowedInstances: number,
