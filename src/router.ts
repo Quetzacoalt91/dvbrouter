@@ -107,7 +107,7 @@ class Router {
   }
 
   async registerChannels(initData: InitData) {
-    const resp: Instance = await retry({ times: 5, interval: 1000 }, async () => {
+    const resp: Instance = await retry({ times: 3, interval: 2000 }, async () => {
       return await this.manager.startInstance(initData);
     })
 
@@ -131,7 +131,7 @@ class Router {
       console.log(`- Register ${channel.name} on port ${resp.port} (id ${channel.service_id})`);
       this.channels.set(channel.service_id, {...resp, ...channel});
     });
-    this.manager.closeInstance(resp.port);
+    await this.manager.closeInstance(resp.port);
   }
 }
 

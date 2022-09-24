@@ -112,7 +112,7 @@ class ProcessManager {
             process.kill('SIGKILL');
             reject(new Error('Acknowledgment message never received. Aborting.'));
           }
-        }, 30000);
+        }, 60000);
   
       });
       this.instances[slot] = runningInstance;
