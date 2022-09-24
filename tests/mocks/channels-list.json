@@ -1,0 +1,413 @@
+[
+  {
+    "number": 1,
+    "lcn": 1,
+    "name": "BBC ONE Lon",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 101,
+    "pmt_version": 0,
+    "unicast_port": 0,
+    "service_id": 4164,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 100,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 101,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 102,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 106,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 105,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 2,
+    "lcn": 2,
+    "name": "BBC TWO",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 201,
+    "pmt_version": 0,
+    "unicast_port": 0,
+    "service_id": 4287,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 200,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 201,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 202,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 206,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 205,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 3,
+    "lcn": 23,
+    "name": "BBC THREE",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 0,
+    "pcr_pid": 8191,
+    "pmt_version": 4,
+    "unicast_port": 0,
+    "service_id": 4288,
+    "service_type": "Television",
+    "pids_num": 2,
+    "pids": [
+      {
+        "number": 300,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 8191,
+        "type": "PCR",
+        "language": "---"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 4,
+    "lcn": 231,
+    "name": "BBC NEWS",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 501,
+    "pmt_version": 0,
+    "unicast_port": 0,
+    "service_id": 4352,
+    "service_type": "Television",
+    "pids_num": 4,
+    "pids": [
+      {
+        "number": 500,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 501,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 502,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 505,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 5,
+    "lcn": 250,
+    "name": "BBC Red Button",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 0,
+    "pcr_pid": 8191,
+    "pmt_version": 0,
+    "unicast_port": 0,
+    "service_id": 4416,
+    "service_type": "Television",
+    "pids_num": 2,
+    "pids": [
+      {
+        "number": 2700,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 8191,
+        "type": "PCR",
+        "language": "---"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 6,
+    "lcn": 9,
+    "name": "BBC FOUR",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 0,
+    "pcr_pid": 8191,
+    "pmt_version": 5,
+    "unicast_port": 0,
+    "service_id": 4544,
+    "service_type": "Television",
+    "pids_num": 2,
+    "pids": [
+      {
+        "number": 400,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 8191,
+        "type": "PCR",
+        "language": "---"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 7,
+    "lcn": 201,
+    "name": "CBBC",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 301,
+    "pmt_version": 4,
+    "unicast_port": 0,
+    "service_id": 4608,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 700,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 301,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 302,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 306,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 305,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [
+      {
+        "client_number": 0,
+        "socket": 13,
+        "remote_address": "192.168.50.201",
+        "remote_port": 28315,
+        "buffer_size": 0,
+        "consecutive_errors": 0,
+        "first_error_time": 0,
+        "last_error_time": 0
+      },
+      {}
+    ]
+  },
+
+  {
+    "number": 8,
+    "lcn": 202,
+    "name": "CBeebies",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 401,
+    "pmt_version": 4,
+    "unicast_port": 0,
+    "service_id": 4672,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 800,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 401,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 402,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 406,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 405,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 9,
+    "lcn": 232,
+    "name": "BBC Parliament",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 601,
+    "pmt_version": 0,
+    "unicast_port": 0,
+    "service_id": 4736,
+    "service_type": "Television",
+    "pids_num": 4,
+    "pids": [
+      {
+        "number": 600,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 601,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 602,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 605,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 26,
+    "lcn": 601,
+    "name": "BBC RB 1",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 901,
+    "pmt_version": 0,
+    "unicast_port": 0,
+    "service_id": 7168,
+    "service_type": "Television",
+    "pids_num": 4,
+    "pids": [
+      {
+        "number": 900,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 901,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 951,
+        "type": "Audio (MPEG1)",
+        "language": "eng"
+      },
+      {
+        "number": 952,
+        "type": "Audio (MPEG1)",
+        "language": "und"
+      }
+    ],
+    "clients": [{}]
+  }
+]
