@@ -29,7 +29,7 @@ class EitFormatter
         this.channelsList.forEach((channel) => {
             xml += `
   <channel id="${channel.service_id}">
-    <display-name lang="en">${channel.name}</display-name>
+    <display-name lang="en"><![CDATA[${channel.name}]]></display-name>
   </channel>`;
         });
         
@@ -101,8 +101,8 @@ class EitFormatter
         return +seconds + (+minutes * 60) + (+hours * 60 * 60);
     }
 
-    private escapeText(text: string): string {
-        return text.replace(/\\u([[:alnum:]]{4})/g, '&#x$1;');
+    public escapeText(text: string): string {
+        return JSON.stringify(text).slice(1, -1).replace(/\\+u([a-zA-Z0-9]{4})/gi, '&#x$1;');
     }
 }
 

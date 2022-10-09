@@ -10,40 +10,40 @@ describe("EIT Formatter", () => {
       */
       const expected = `<tv generator-info-name="Dvbrouter EIT">
   <channel id="8261">
-    <display-name lang="en">ITV</display-name>
+    <display-name lang="en"><![CDATA[ITV]]></display-name>
   </channel>
   <channel id="8294">
-    <display-name lang="en">ITV3</display-name>
+    <display-name lang="en"><![CDATA[ITV3]]></display-name>
   </channel>
   <channel id="8325">
-    <display-name lang="en">ITV2</display-name>
+    <display-name lang="en"><![CDATA[ITV2]]></display-name>
   </channel>
   <channel id="8330">
-    <display-name lang="en">ITV4</display-name>
+    <display-name lang="en"><![CDATA[ITV4]]></display-name>
   </channel>
   <channel id="8361">
-    <display-name lang="en">ITV +1</display-name>
+    <display-name lang="en"><![CDATA[ITV +1]]></display-name>
   </channel>
   <channel id="8384">
-    <display-name lang="en">Channel 4</display-name>
+    <display-name lang="en"><![CDATA[Channel 4]]></display-name>
   </channel>
   <channel id="8385">
-    <display-name lang="en">Film4</display-name>
+    <display-name lang="en"><![CDATA[Film4]]></display-name>
   </channel>
   <channel id="8442">
-    <display-name lang="en">More 4</display-name>
+    <display-name lang="en"><![CDATA[More 4]]></display-name>
   </channel>
   <channel id="8448">
-    <display-name lang="en">E4</display-name>
+    <display-name lang="en"><![CDATA[E4]]></display-name>
   </channel>
   <channel id="8452">
-    <display-name lang="en">Channel 4+1</display-name>
+    <display-name lang="en"><![CDATA[Channel 4+1]]></display-name>
   </channel>
   <channel id="8458">
-    <display-name lang="en">E4+1</display-name>
+    <display-name lang="en"><![CDATA[E4+1]]></display-name>
   </channel>
   <channel id="8500">
-    <display-name lang="en">Channel 5</display-name>
+    <display-name lang="en"><![CDATA[Channel 5]]></display-name>
   </channel>
   <programme start="20221008002000 +0000" stop="20221008012500 +0000" channel="8458">
     <title lang="en">
@@ -57,6 +57,13 @@ describe("EIT Formatter", () => {
 
       const formatter = new EitFormatter(channelsList, eitDataSimple.EIT_tables);
       expect(formatter.toXml()).toEqual(expected);
+    });
+
+    it('tranforms unicode characters', () => {
+      const formatter = new EitFormatter();
+      const originalText = `1\/4. 4 Extra Debut. Pam is \u001cstill in the game\u001d. Poetry and sketches about getting older but not giving in. With Geoffrey Whitehead. From March 2018.`;
+
+      expect(formatter.escapeText(originalText)).toBe("1\/4. 4 Extra Debut. Pam is &#x001c;still in the game&#x001d;. Poetry and sketches about getting older but not giving in. With Geoffrey Whitehead. From March 2018.");
     });
 });
   
