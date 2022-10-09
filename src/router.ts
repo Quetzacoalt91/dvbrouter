@@ -7,8 +7,8 @@ import { queue, retry } from 'async';
 import { DvbConfig } from './types/config';
 import { Channel, InitData } from './types/router';
 
-import { ChannelsList } from './types/mumudvb';
-import { getChannelsList } from './mumudvb';
+import { getChannelsList, getEit } from './mumudvb';
+import EitFormatter from './eit-formatter';
 
 
 class Router {
@@ -22,6 +22,7 @@ class Router {
   public constructor(
     private config: DvbConfig,
     private manager: ProcessManager,
+    private eitFormatter: EitFormatter,
   ) {
     this.filters = this.config.filters;
     this.channels = new Map<number, Channel&Instance>
@@ -111,9 +112,14 @@ class Router {
       return await this.manager.startInstance(initData);
     })
 
-    const data: ChannelsList = await getChannelsList(resp.port);
+    const [data, eit] = await Promise.all([
+      getChannelsList(resp.port),
+      getEit(resp.port),
+    ]);
     
-    this.manager.closeInstance(resp.port);
+    // ToDo: We could resolve here to let another port to load,
+    // while we register the lists we got
+    await this.manager.closeInstance(resp.port);
 
     // Get from JSON and filter unwanted channels
     const length = this.filters.length;
@@ -131,7 +137,9 @@ class Router {
       console.log(`- Register ${channel.name} on port ${resp.port} (id ${channel.service_id})`);
       this.channels.set(channel.service_id, {...resp, ...channel});
     });
-    await this.manager.closeInstance(resp.port);
+
+    this.eitFormatter.addChannels(channels);
+    this.eitFormatter.addEitTable(eit.EIT_tables);
   }
 }
 

@@ -1,5 +1,5 @@
 import { EitDescriptor, EitEvent, EitTable } from "./types/eit";
-import { ChannelsList } from "./types/mumudvb";
+import { Channel, ChannelsList } from "./types/mumudvb";
 
 class EitFormatter
 {
@@ -9,8 +9,17 @@ class EitFormatter
     ) {
     }
 
-    public addEitTable (additionalEit: EitTable[]) {
+    public addChannels(channels: Channel[]): void {
+        this.channelsList.push(...channels);
+    }
+
+    public addEitTable(additionalEit: EitTable[]): void {
         this.eventInformationTable.push(...additionalEit);
+    }
+
+    public reset(): void {
+        this.channelsList = [];
+        this.eventInformationTable = [];
     }
 
     public toXml(): string {

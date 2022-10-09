@@ -1,7 +1,8 @@
 import {Request, ResponseToolkit} from '@hapi/hapi';
+import EitFormatter from '../eit-formatter';
 import Router from '../router';
 
-export default (router: Router) => [
+export default (router: Router, eitFormatter: EitFormatter) => [
     {
         method: 'GET',
         path: '/',
@@ -23,6 +24,15 @@ export default (router: Router) => [
             return h.response(router.buildPlaylist(request.server.info.protocol, request.info.host))
                 .type('audio/x-mpegurl')
                 .header("Content-Disposition", 'attachment; filename=playlist.m3u');
+        },
+    },
+    {
+        method: 'GET',
+        path: '/eit.xml',
+        handler: (request: Request, h: ResponseToolkit) => {
+            return h.response(eitFormatter.toXml())
+                .type('application/xml')
+                .header("Content-Disposition", 'attachment; filename=eit.xml');
         },
     },
     {
