@@ -5,6 +5,7 @@ import {Server} from '@hapi/hapi';
 import ProcessManager from './process-manager';
 import streamRoutes from './api/stream-routes';
 import Router from './router';
+import EitFormatter from './eit-formatter';
 const config = require('../config/app.json');
 
 ProcessManager.closeRunningProcesses();
@@ -16,14 +17,15 @@ ProcessManager.closeRunningProcesses();
 const openConnections = async () => {
   const server = new Server(config.server);
   const manager = new ProcessManager(config.mumudvb.channels);
-  const router = new Router(config.mumudvb, manager);
-
+  const eitFormatter = new EitFormatter();
+  const router = new Router(config.mumudvb, manager, eitFormatter);
+  
   await router.init();
 
   setInterval(() => manager.findAndCloseUnusedInstances(), 10000);
   console.log('Check of unused instances initialized');
 
-  server.route(streamRoutes(router));
+  server.route(streamRoutes(router, eitFormatter));
   server.start();
   console.log('DVB server running at:', server.info.uri);
 };

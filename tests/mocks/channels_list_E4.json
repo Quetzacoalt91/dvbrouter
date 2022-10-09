@@ -1,0 +1,564 @@
+[
+  {
+    "number": 1,
+    "lcn": 3,
+    "name": "ITV",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 1701,
+    "pmt_version": 6,
+    "unicast_port": 0,
+    "service_id": 8261,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 1700,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 1701,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 1702,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1703,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1731,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 2,
+    "lcn": 10,
+    "name": "ITV3",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 2301,
+    "pmt_version": 6,
+    "unicast_port": 0,
+    "service_id": 8294,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 2300,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 2301,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 2302,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 2303,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 2331,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 3,
+    "lcn": 6,
+    "name": "ITV2",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 1801,
+    "pmt_version": 9,
+    "unicast_port": 0,
+    "service_id": 8325,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 1800,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 1801,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 1802,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1803,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1831,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 4,
+    "lcn": 26,
+    "name": "ITV4",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 2001,
+    "pmt_version": 7,
+    "unicast_port": 0,
+    "service_id": 8330,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 2000,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 2001,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 2002,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 2003,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 2031,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 5,
+    "lcn": 35,
+    "name": "ITV +1",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 1901,
+    "pmt_version": 7,
+    "unicast_port": 0,
+    "service_id": 8361,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 1900,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 1901,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 1902,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1903,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1931,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 6,
+    "lcn": 4,
+    "name": "Channel 4",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 1101,
+    "pmt_version": 26,
+    "unicast_port": 0,
+    "service_id": 8384,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 1100,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 1101,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 1102,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1103,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1131,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 7,
+    "lcn": 14,
+    "name": "Film4",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 1501,
+    "pmt_version": 26,
+    "unicast_port": 0,
+    "service_id": 8385,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 1500,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 1501,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 1502,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1503,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1531,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 8,
+    "lcn": 18,
+    "name": "More 4",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 1401,
+    "pmt_version": 26,
+    "unicast_port": 0,
+    "service_id": 8442,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 1400,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 1401,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 1402,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1403,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1431,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 9,
+    "lcn": 13,
+    "name": "E4",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 1,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 1301,
+    "pmt_version": 28,
+    "unicast_port": 0,
+    "service_id": 8448,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 1300,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 1301,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 1302,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1303,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1331,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [
+      {
+        "client_number": 0,
+        "socket": 25,
+        "remote_address": "192.168.50.201",
+        "remote_port": 55505,
+        "buffer_size": 0,
+        "consecutive_errors": 0,
+        "first_error_time": 0,
+        "last_error_time": 0
+      }
+    ]
+  },
+
+  {
+    "number": 10,
+    "lcn": 15,
+    "name": "Channel 4+1",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 1201,
+    "pmt_version": 26,
+    "unicast_port": 0,
+    "service_id": 8452,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 1200,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 1201,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 1202,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1203,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1231,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 11,
+    "lcn": 30,
+    "name": "E4+1",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 2101,
+    "pmt_version": 16,
+    "unicast_port": 0,
+    "service_id": 8458,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 2400,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 2101,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 2102,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 2103,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 2131,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  },
+
+  {
+    "number": 12,
+    "lcn": 5,
+    "name": "Channel 5",
+    "sap_group": "",
+    "ip_multicast": "0.0.0.0",
+    "port_multicast": 1234,
+    "num_clients": 0,
+    "ratio_scrambled": 0,
+    "is_up": 1,
+    "pcr_pid": 1601,
+    "pmt_version": 7,
+    "unicast_port": 0,
+    "service_id": 8500,
+    "service_type": "Television",
+    "pids_num": 5,
+    "pids": [
+      {
+        "number": 1600,
+        "type": "PMT",
+        "language": "---"
+      },
+      {
+        "number": 1601,
+        "type": "Video (MPEG2)",
+        "language": "---"
+      },
+      {
+        "number": 1602,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1603,
+        "type": "Audio (MPEG2)",
+        "language": "eng"
+      },
+      {
+        "number": 1631,
+        "type": "Subtitling",
+        "language": "eng"
+      }
+    ],
+    "clients": [{}]
+  }
+]
