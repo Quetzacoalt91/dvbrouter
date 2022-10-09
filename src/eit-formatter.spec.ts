@@ -46,7 +46,9 @@ describe("EIT Formatter", () => {
     <display-name lang="en">Channel 5</display-name>
   </channel>
   <programme start="20221008002000 +0000" stop="20221008012500 +0000" channel="8458">
-    <title lang="en">Naked Attraction</title>
+    <title lang="en">
+      <![CDATA[Naked Attraction]]>
+    </title>
     <desc lang="en">
       <![CDATA[Having exhausted Cornwall's dating pool, Millie hopes to finally wave goodbye to laid-back surfers. And Alex the window cleaner seeks someone who'll take a shine to his fit body. (S4 Ep4)  [AD,S]]]>
     </desc>

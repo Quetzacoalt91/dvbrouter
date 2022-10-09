@@ -35,6 +35,11 @@ class EitFormatter
         
         // Programs
         this.eventInformationTable.forEach((eit) => {
+            // If channel not in list, skip.
+            if (!this.channelsList.find((c) => c.service_id === +eit.sid)) {
+                return;
+            }
+
             eit.EIT_sections.forEach((section) => {
                 section.EIT_events.forEach((event) => {
                     const progDetails = event.EIT_descriptors.find((descriptor) => descriptor.descr === 'Short event descriptor');
@@ -43,9 +48,11 @@ class EitFormatter
                         const {start, stop} = this.jsonToDates(event);
                         xml += `
   <programme start="${this.dateToXML(start)}" stop="${this.dateToXML(stop)}" channel="${section.service_id}">
-    <title lang="en">${progDetails.short_evt?.name}</title>
+    <title lang="en">
+      <![CDATA[${this.escapeText(progDetails.short_evt?.name || '')}]]>
+    </title>
     <desc lang="en">
-      <![CDATA[${progDetails.short_evt?.text}]]>
+      <![CDATA[${this.escapeText(progDetails.short_evt?.text || '')}]]>
     </desc>
   </programme>`;
                     }
@@ -92,6 +99,10 @@ class EitFormatter
         const [hours, minutes, seconds] = duration.split(':');
 
         return +seconds + (+minutes * 60) + (+hours * 60 * 60);
+    }
+
+    private escapeText(text: string): string {
+        return text.replace(/\\u([[:alnum:]]{4})/g, '&#x$1;');
     }
 }
 
