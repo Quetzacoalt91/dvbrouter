@@ -30,6 +30,8 @@ class Router {
     
   public async init() {
     console.info('Initializing channel list from config files.');
+    this.channels.clear();
+    this.eitFormatter.reset();
 
     /*
      * Define a queue to avoid too channel registrations at the same time.
