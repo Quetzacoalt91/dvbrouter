@@ -32,6 +32,7 @@ class Router {
     console.info('Initializing channel list from config files.');
     this.channels.clear();
     this.eitFormatter.reset();
+    this.manager.setQuickStartOfMumudvbInstances(false);
 
     /*
      * Define a queue to avoid too channel registrations at the same time.
