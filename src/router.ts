@@ -111,7 +111,7 @@ class Router {
   }
 
   async registerChannels(initData: InitData) {
-    const resp: Instance = await retry({ times: 3, interval: 2000 }, async () => {
+    const resp: Instance = await retry({ times: 2, interval: 2000 }, async () => {
       return await this.manager.startInstance(initData);
     })
 

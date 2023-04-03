@@ -23,7 +23,7 @@ const openConnections = async () => {
   await router.init();
 
   setInterval(() => manager.findAndCloseUnusedInstances(), 10000);
-  setInterval(() => router.init(), 172800000);
+  setInterval(() => router.init(), 108000000);
   console.log('Check of unused instances initialized');
 
   server.route(streamRoutes(router, eitFormatter));
