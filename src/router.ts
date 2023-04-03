@@ -30,6 +30,9 @@ class Router {
     
   public async init() {
     console.info('Initializing channel list from config files.');
+    this.channels.clear();
+    this.eitFormatter.reset();
+    this.manager.setQuickStartOfMumudvbInstances(false);
 
     /*
      * Define a queue to avoid too channel registrations at the same time.
@@ -108,7 +111,7 @@ class Router {
   }
 
   async registerChannels(initData: InitData) {
-    const resp: Instance = await retry({ times: 3, interval: 2000 }, async () => {
+    const resp: Instance = await retry({ times: 2, interval: 2000 }, async () => {
       return await this.manager.startInstance(initData);
     })
 
